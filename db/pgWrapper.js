@@ -3,10 +3,10 @@ const dotenv= require("dotenv");
 dotenv.config();
 function query(queryString, cbFunc) {
   const pool = new Pool({
-    user: process.env.USERNAME,
-    host: process.env.USERHOST,
-    database:  process.env.DATABASE,
-    password:  process.env.USERPASSWORD,
+    user: "chatbot_d8qc_user",
+    host:"dpg-cn0c5igcmk4c73am8u6g-a",
+    database: "chatbot_d8qc",
+    password:" DbCFjiM7OLFSvpXgafPHaqee0iDV8Zad",
     port: 5432,
   });
   pool.query(queryString, (error, results) => {
