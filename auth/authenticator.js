@@ -17,7 +17,7 @@ module.exports = (injectedUserDB) => {
 function registerUser(req, res) {
   userDB.isValidUser(req.body.username, (error, isValidUser) => {
     if (error || !isValidUser) {
-      sendResponse(res, 400, "Something went wrong!", error);
+      sendResponse(res, 400, "user already exist!", error);
       return;
     }
 
