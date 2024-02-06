@@ -30,14 +30,18 @@ function grantTypeAllowed(clientID, grantType, cbFunc) {
 }
 
 function getUser(username, password, cbFunc) {
+    console.log(username,password)
     userDB.getUser(username, password, cbFunc);
 }
 
 function saveAccessToken(accessToken, clientID, expires, user, cbFunc) {
+    console.log(user)
+    
     tokenDB.saveAccessToken(accessToken, user.id, cbFunc);
 }
 
 function getAccessToken(bearerToken, cbFunc) {
+    console.log(bearerToken);
     tokenDB.getUserIDFromBearerToken(bearerToken, (userID) => {
         const accessToken = {
             user: {
