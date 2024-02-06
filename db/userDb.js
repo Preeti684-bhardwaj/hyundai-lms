@@ -25,12 +25,21 @@ function getUser(username, password, cbFunc) {
     const getUserQuery = `SELECT * FROM users WHERE username = '${username}' AND user_password = '${shaPass}'`;
 
     pgPool.query(getUserQuery, (response) => {
-        cbFunc(
-            false,
-            response.results && response.results.rowCount === 1
-                ? response.results.rows[0]
-                : null
-        );
+        if (response.results && response.results.rowCount === 1) {
+            const user = response.results.rows[0];
+
+            // Compare username and password
+            if (user.username !== user.user_password) {
+                // Username and password don't match
+                cbFunc(true, null, 400, "Password doesn't match");
+            } else {
+                // Username and password match
+                cbFunc(false, user);
+            }
+        } else {
+            // No user found
+            cbFunc(false, null);
+        }
     });
 }
 

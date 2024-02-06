@@ -58,16 +58,22 @@ function registerUser(req, res) {
 }
 
 function login(req, res) {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  userDB.getUser(email, password, (error, user) => {
-    if (error || !user) {
-      sendResponse(res, 400, "Wrong email or password!", error);
-      return;
-    }
-
-    sendResponse(res, 200, "Login successful!", null);
-  });
+    userDB.getUser(email, password, (error, user, status, message) => {
+      if (error || !user) {
+        sendResponse(res, status, message, error);
+        return;
+      }
+  
+      // Continue with the successful login logic
+      // ...
+  
+      // For example, you might generate a token and send it as a response
+      const token = generateToken(user);
+  
+      sendResponse(res, 200, "Login successful!", null, { token });
+    });
 }
 
 function sendResponse(res, statusCode, message, error) {
