@@ -57,24 +57,23 @@ function registerUser(req, res) {
   });
 }
 
-function login(req, res) {
-    const { email, password } = req.body;
-
-    userDB.getUser(email, password, (error, user, status, message) => {
-      if (error || !user) {
-        sendResponse(res, status, message, error);
-        return;
-      }
-  
-      // Continue with the successful login logic
-      // ...
-  
-      // For example, you might generate a token and send it as a response
-      const token = generateToken(user);
-  
-      sendResponse(res, 200, "Login successful!", null, { token });
+function login(username, password, res) {
+    getUser(username, password, (error, user, statusCode, errorMessage) => {
+        if (error) {
+            // Handle the case where username and password don't match
+            res.status(statusCode).json({ error: errorMessage });
+        } else {
+            // Handle the case where login is successful
+            if (user) {
+                res.status(200).json({ message: "Login successful", user: user });
+            } else {
+                // Handle the case where no user is found
+                res.status(404).json({ error: "User not found" });
+            }
+        }
     });
 }
+
 
 function sendResponse(res, statusCode, message, error) {
   res.status(statusCode).json({

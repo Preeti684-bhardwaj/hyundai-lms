@@ -19,6 +19,7 @@ async function register(username, userTitle, password, cbFunc) {
 
     pgPool.query(query, cbFunc);
 }
+
 function getUser(username, password, cbFunc) {
     var shaPass = crypto.createHash("sha256").update(password).digest("hex");
 
