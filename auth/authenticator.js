@@ -88,7 +88,7 @@ async function forgetPassword(req, res) {
       return res.status(400).send("User with given email doesn't exist");
     }
 
-    return res.status(200).send({"success":true,"message":"valid email",user});
+    return res.status(200).send({"success":true,"message":"valid email",userID:user.id});
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred");
