@@ -20,7 +20,7 @@ module.exports = (injectedUserDB) => {
     registerUser,
     login,
     forgetPassword,
-    // resetPassword,
+    resetPassword,
   };
 };
 
@@ -96,17 +96,45 @@ async function forgetPassword(req, res) {
 }
 
 async function resetPassword(req, res) {
-  try {
-    const schema = Joi.object({ password: Joi.string().required(),  confirmPassword: Joi.string().required()});
-    const { error } = schema.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-   
-  } catch (error) {
-    res.send("An error occured");
-    console.log(error);
+    try {
+      const schema = Joi.object({
+        password: Joi.string().required(),
+        confirmPassword: Joi.string().required().valid(Joi.ref('password'))
+      });
+      const { error } = schema.validate(req.body);
+      if (error) return res.status(400).send(error.details[0].message);
+  
+      const { password } = req.body;
+      const userId = req.params.userId;
+  
+      // Check if userId is valid
+      const userQuery = {
+        text: 'SELECT * FROM users WHERE id = $1',
+        values: [userId],
+      };
+      const userResult = await pool.query(userQuery);
+      const user = userResult.rows[0];
+      if (!user) {
+        return res.status(400).send("Invalid user ID");
+      }
+  
+      // Hash the password
+      const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+  
+      // Update user password in the database
+      const updateQuery = {
+        text: 'UPDATE users SET user_password = $1 WHERE id = $2',
+        values: [hashedPassword, userId],
+      };
+      await pool.query(updateQuery);
+  
+      res.send("Password reset successfully.");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("An error occurred");
+    }
   }
-}
+  
 
 function sendResponse(res, statusCode, message, error) {
   res.status(statusCode).json({
