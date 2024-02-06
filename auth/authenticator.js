@@ -88,38 +88,26 @@ async function forgetPassword(req, res) {
       return res.status(400).send("User with given email doesn't exist");
     }
 
-    return res.status(200).send({"success":true,"message":"valid email"});
+    return res.status(200).send({"success":true,"message":"valid email",user});
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred");
   }
 }
 
-// async function resetPassword(req, res) {
-//   try {
-//     const schema = Joi.object({ password: Joi.string().required() });
-//     const { error } = schema.validate(req.body);
-//     if (error) return res.status(400).send(error.details[0].message);
+async function resetPassword(req, res) {
+  try {
+    const schema = Joi.object({ password: Joi.string().required(),  confirmPassword: Joi.string().required()});
+    const { error } = schema.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-//     const user = await User.findById(req.params.userId);
-//     if (!user) return res.status(400).send("invalid link or expired");
+   
+  } catch (error) {
+    res.send("An error occured");
+    console.log(error);
+  }
+}
 
-//     const token = await Token.findOne({
-//       userId: user._id,
-//       token: req.params.token,
-//     });
-//     if (!token) return res.status(400).send("Invalid link or expired");
-
-//     user.password = req.body.password;
-//     await user.save();
-//     await token.delete();
-
-//     res.send("password reset sucessfully.");
-//   } catch (error) {
-//     res.send("An error occured");
-//     console.log(error);
-//   }
-// }
 function sendResponse(res, statusCode, message, error) {
   res.status(statusCode).json({
     message: message,
