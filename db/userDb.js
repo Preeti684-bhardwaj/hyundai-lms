@@ -19,28 +19,18 @@ async function register(username, userTitle, password, cbFunc) {
 
     pgPool.query(query, cbFunc);
 }
-
 function getUser(username, password, cbFunc) {
     var shaPass = crypto.createHash("sha256").update(password).digest("hex");
 
     const getUserQuery = `SELECT * FROM users WHERE username = '${username}' AND user_password = '${shaPass}'`;
 
     pgPool.query(getUserQuery, (response) => {
-        if (response.results && response.results.rowCount === 1) {
-            const user = response.results.rows[0];
-
-            // Compare username and password
-            if (user.username !== user.user_password) {
-                // Username and password don't match
-                cbFunc(true, null, 400, "Password doesn't match");
-            } else {
-                // Username and password match
-                cbFunc(false, user);
-            }
-        } else {
-            // No user found
-            cbFunc(false, null);
-        }
+        cbFunc(
+            false,
+            response.results && response.results.rowCount === 1
+                ? response.results.rows[0]
+                : null
+        );
     });
 }
 

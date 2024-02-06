@@ -57,21 +57,7 @@ function registerUser(req, res) {
   });
 }
 
-function login(username, password, res) {
-    getUser(username, password, (error, user, statusCode, errorMessage) => {
-        if (error) {
-            // Handle the case where username and password don't match
-            res.status(statusCode).json({ error: errorMessage });
-        } else {
-            // Handle the case where login is successful
-            if (user) {
-                res.status(200).json({ message: "Login successful", user: user });
-            } else {
-                // Handle the case where no user is found
-                res.status(404).json({ error: "User not found" });
-            }
-        }
-    });
+function login(req, res) {  
 }
 
 
