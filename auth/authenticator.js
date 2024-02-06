@@ -57,7 +57,18 @@ function registerUser(req, res) {
   });
 }
 
-function login(query, res) {}
+function login(req, res) {
+  const { email, password } = req.body;
+
+  userDB.getUser(email, password, (error, user) => {
+    if (error || !user) {
+      sendResponse(res, 400, "Wrong email or password!", error);
+      return;
+    }
+
+    sendResponse(res, 200, "Login successful!", null);
+  });
+}
 
 function sendResponse(res, statusCode, message, error) {
   res.status(statusCode).json({
